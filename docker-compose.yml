@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    # Указываем путь до папки с файлами и Dockerfile
+    build: 
+      context: ./backend/project
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: ./frontend/project
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
