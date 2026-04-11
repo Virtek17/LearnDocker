@@ -1,15 +1,28 @@
-version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nest_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data 
+
+      
+
   backend:
-    # Указываем путь до папки с файлами и Dockerfile
     build: 
       context: ./backend/project
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    networks:
-      - app-network
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/nest_db
 
   frontend:
     build: 
@@ -19,9 +32,7 @@ services:
       - "80:80"
     depends_on:
       - backend
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+
+volumes:
+  pgdata:
